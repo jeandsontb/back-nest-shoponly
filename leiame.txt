@@ -1,1 +1,5 @@
-339bb8ba9c7f docker
+c668f4814ad7 docker
+
+
+rodar a imagem
+docker run --name shop-postgres -e POSTGRES_PASSWORD=123456 -p 5432:5432 -d postgres
