@@ -3,12 +3,19 @@ import { UserEntity } from 'src/user/entity/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { UserService } from 'src/user/user.service';
 import { compare } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { ReadLoginDto } from './dto/readLogin.dto';
+import { ReadUserDto } from 'src/user/dto/readUser.dto';
+import { LoginPayloadDto } from './dto/loginPayload.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
-  async login(loginDto: LoginDto): Promise<UserEntity> {
+  async login(loginDto: LoginDto): Promise<ReadLoginDto> {
     const user: UserEntity = await this.userService
       .getUserByEmail(loginDto.email)
       .catch(() => undefined);
@@ -23,6 +30,9 @@ export class AuthService {
       throw new NotFoundException('Senha inválida!');
     }
 
-    return user;
+    return {
+      accessToken: this.jwtService.sign({ ...new LoginPayloadDto(user) }),
+      user: new ReadUserDto(user),
+    };
   }
 }
