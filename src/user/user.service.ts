@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UserEntity } from './entity/user.entity';
 
@@ -13,6 +13,7 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
+  // CRIAÇÃO DE UM USUÁRIO *****************************************************
   async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
     const saltRoundCrypt = 10;
     const newHash = await hash(createUserDto.password, saltRoundCrypt);
@@ -24,7 +25,33 @@ export class UserService {
     });
   }
 
+  //  PEGA UM USUÁRIO COM A REFERÊNCIA TAMBÉM DE UM ENDEREÇO *******************
+  async getUserByIdWithReferenceAddress(userId: number): Promise<UserEntity> {
+    return this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: ['addresses'],
+    });
+  }
+
+  //  PEGA TODOS OS USUÁRIOS ***************************************************
   async getAllUser(): Promise<UserEntity[]> {
     return this.userRepository.find();
+  }
+
+  //  VERIFICA SE EXISTE UM USUÁRIO COM O ID INFORMADO *************************
+  async getUserById(userId: number): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não encontrado');
+    }
+
+    return user;
   }
 }
