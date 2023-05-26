@@ -10,7 +10,10 @@ import {
 import { AddressService } from './address.service';
 import { CreateAddressDto } from './dto/createAddress.dto';
 import { AddressEntity } from './entity/address.entity';
+import { Roles } from 'src/decorators/roles.decorators';
+import { UserTypeRole } from 'src/user/enum/user-type.enum';
 
+@Roles(UserTypeRole.User)
 @Controller('address')
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
