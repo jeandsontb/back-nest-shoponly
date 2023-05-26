@@ -22,15 +22,17 @@ export class UserController {
     return this.userService.createUser(createUser);
   }
 
-  @Get('/:userId')
-  async getUserById(@Param('userId') userId: number): Promise<UserEntity> {
-    return this.userService.getUserByIdWithReferenceAddress(userId);
-  }
-
   @Get()
   async getAllUsers(): Promise<ReadUserDto[]> {
     return (await this.userService.getAllUser()).map(
       (users) => new ReadUserDto(users),
+    );
+  }
+
+  @Get('/:userId')
+  async getUserById(@Param('userId') userId: number): Promise<ReadUserDto> {
+    return new ReadUserDto(
+      await this.userService.getUserByIdWithReferenceAddress(userId),
     );
   }
 }
