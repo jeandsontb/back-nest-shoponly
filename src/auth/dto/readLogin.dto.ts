@@ -1,4 +1,4 @@
-import { ReadUserDto } from 'src/user/dto/readUser.dto';
+import { ReadUserDto } from '../../user/dto/readUser.dto';
 
 export class ReadLoginDto {
   user: ReadUserDto;

@@ -1,5 +1,4 @@
-import { AddressEntity } from 'src/address/entity/address.entity';
-import { CityEntity } from 'src/city/entity/city.entity';
+import { CityEntity } from '../../city/entity/city.entity';
 import {
   Column,
   CreateDateColumn,

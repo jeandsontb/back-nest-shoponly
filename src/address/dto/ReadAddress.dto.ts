@@ -1,4 +1,4 @@
-import { ReadCityDto } from 'src/city/dto/readCity.dto';
+import { ReadCityDto } from '../../city/dto/readCity.dto';
 import { AddressEntity } from '../entity/address.entity';
 
 export class ReadAddressDto {
