@@ -12,8 +12,9 @@ import { AddressEntity } from './entity/address.entity';
 import { Roles } from '../decorators/roles.decorators';
 import { UserTypeRole } from '../user/enum/user-type.enum';
 import { UserId } from '../decorators/user-id.decorators';
+import { ReadAddressDto } from './dto/ReadAddress.dto';
 
-@Roles(UserTypeRole.User)
+@Roles(UserTypeRole.User, UserTypeRole.Admin)
 @Controller('address')
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
@@ -27,8 +28,17 @@ export class AddressController {
     return this.addressService.createAddress(createUserDto, userId);
   }
 
+  // @Get()
+  // async getAllAddress() {
+  //   return this.addressService.getAllAddress();
+  // }
+
   @Get()
-  async getAllAddress() {
-    return this.addressService.getAllAddress();
+  async getAddressByUserId(
+    @UserId() userId: number,
+  ): Promise<ReadAddressDto[]> {
+    return (await this.addressService.getAddressByUserId(userId)).map(
+      (address) => new ReadAddressDto(address),
+    );
   }
 }
