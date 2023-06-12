@@ -25,7 +25,7 @@ export class CategoryController {
     );
   }
 
-  @Roles(UserTypeRole.Admin, UserTypeRole.User)
+  @Roles(UserTypeRole.Admin)
   @UsePipes(ValidationPipe)
   @Post()
   async createCategory(
