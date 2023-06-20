@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   UsePipes,
   ValidationPipe,
@@ -11,6 +12,8 @@ import { CreateUserDto } from './dto/createUser.dto';
 import { UserService } from './user.service';
 import { UserEntity } from './entity/user.entity';
 import { ReadUserDto } from './dto/readUser.dto';
+import { UpdatePasswordDto } from './dto/updateUser.dto';
+import { UserId } from 'src/decorators/user-id.decorators';
 
 @Controller('user')
 export class UserController {
@@ -34,5 +37,14 @@ export class UserController {
     return new ReadUserDto(
       await this.userService.getUserByIdWithReferenceAddress(userId),
     );
+  }
+
+  @Patch()
+  @UsePipes(ValidationPipe)
+  async updatePasswordUser(
+    @UserId() userId: number,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ): Promise<UserEntity> {
+    return this.userService.updatePasswordUser(userId, updatePasswordDto);
   }
 }
