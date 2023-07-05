@@ -11,6 +11,7 @@ import { CartEntity } from './entity/cart.entity';
 import { InsertCardDto } from './dto/insert-cart.dto';
 import { CartService } from './cart.service';
 import { UserId } from 'src/decorators/user-id.decorators';
+import { ReadCartDto } from './dto/read-cart.dto';
 
 @Roles(UserTypeRole.User, UserTypeRole.Admin)
 @Controller('cart')
@@ -22,7 +23,9 @@ export class CartController {
   async insertCart(
     @Body() insertCart: InsertCardDto,
     @UserId() userId: number,
-  ): Promise<CartEntity> {
-    return this.cartService.insertProductCart(insertCart, userId);
+  ): Promise<ReadCartDto> {
+    return new ReadCartDto(
+      await this.cartService.insertProductCart(insertCart, userId),
+    );
   }
 }
