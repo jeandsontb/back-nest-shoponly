@@ -1,5 +1,5 @@
-import { ReadCartDto } from 'src/cart/dto/read-cart.dto';
-import { ReadProductDto } from 'src/product/dto/read-product.dto';
+import { ReadCartDto } from '../../cart/dto/read-cart.dto';
+import { ReadProductDto } from '../../product/dto/read-product.dto';
 import { CartProductEntity } from '../entity/cart-product.entity';
 
 export class ReadCartProductDto {

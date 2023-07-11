@@ -13,8 +13,8 @@ import { UserService } from './user.service';
 import { UserEntity } from './entity/user.entity';
 import { ReadUserDto } from './dto/readUser.dto';
 import { UpdatePasswordDto } from './dto/updateUser.dto';
-import { UserId } from 'src/decorators/user-id.decorators';
-import { Roles } from 'src/decorators/roles.decorators';
+import { UserId } from '../decorators/user-id.decorators';
+import { Roles } from '../decorators/roles.decorators';
 import { UserTypeRole } from './enum/user-type.enum';
 
 @Controller('user')
