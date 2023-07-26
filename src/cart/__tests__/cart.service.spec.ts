@@ -1,4 +1,4 @@
-import { Repository, DeleteResult, Not } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CartService } from '../cart.service';
 import { CartEntity } from '../entity/cart.entity';
 import { Test, TestingModule } from '@nestjs/testing';
