@@ -1,3 +1,4 @@
+import { OrderEntity } from '../../order/entity/order.entity';
 import { AddressEntity } from '../../address/entity/address.entity';
 import {
   Column,
@@ -39,4 +40,7 @@ export class UserEntity {
 
   @OneToMany(() => AddressEntity, (address) => address.user)
   addresses?: AddressEntity[];
+
+  @OneToMany(() => OrderEntity, (order) => order.address)
+  orders?: OrderEntity[];
 }
