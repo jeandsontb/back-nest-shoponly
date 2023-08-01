@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity } from './entity/order.entity';
 import { Repository } from 'typeorm';
@@ -7,6 +7,10 @@ import { PaymentService } from 'src/payment/payment.service';
 import { CartService } from 'src/cart/cart.service';
 import { OrderProductService } from 'src/order-product/order-product.service';
 import { ProductService } from 'src/product/product.service';
+import { PaymentEntity } from 'src/payment/entity/payment.entity';
+import { OrderProductEntity } from 'src/order-product/entity/order-product.entity';
+import { CartEntity } from 'src/cart/entity/cart.entity';
+import { ProductEntity } from 'src/product/entity/product.entity';
 
 @Injectable()
 export class OrderService {
@@ -19,38 +23,86 @@ export class OrderService {
     private readonly productService: ProductService,
   ) {}
 
-  async createOrder(
+  async saveOrder(
     createOrderDto: CreateOrderDto,
-    cartId: number,
     userId: number,
+    payment: PaymentEntity,
   ): Promise<OrderEntity> {
-    const payment = await this.paymentService.createPayment(createOrderDto);
-
-    const order = await this.orderRepository.save({
+    return this.orderRepository.save({
       addressId: createOrderDto.addressId,
       date: new Date(),
       paymentId: payment.id,
       userId,
     });
+  }
 
-    const cart = await this.cartService.getCartUserById(userId, true);
-
-    const products = await this.productService.getAll(
-      cart.cartProduct?.map((cartProduct) => cartProduct.productId),
-    );
-
-    await Promise.all(
+  async createOrderProductUsingCart(
+    cart: CartEntity,
+    orderId: number,
+    products: ProductEntity[],
+  ) {
+    Promise.all(
       cart.cartProduct?.map((cartProduct) => {
         this.orderProductService.createOrderProduct(
           cartProduct.productId,
-          order.id,
+          orderId,
           products.find((product) => product.id === cartProduct.productId)
             ?.price || 0,
           cartProduct.amount,
         );
       }),
     );
+  }
+
+  async createOrder(
+    createOrderDto: CreateOrderDto,
+    userId: number,
+  ): Promise<OrderEntity> {
+    const cart = await this.cartService.getCartUserById(userId, true);
+
+    const products = await this.productService.getAll(
+      cart.cartProduct?.map((cartProduct) => cartProduct.productId),
+    );
+
+    const payment = await this.paymentService.createPayment(
+      createOrderDto,
+      products,
+      cart,
+    );
+
+    const order: OrderEntity = await this.saveOrder(
+      createOrderDto,
+      userId,
+      payment,
+    );
+
+    await this.createOrderProductUsingCart(cart, order.id, products);
+
+    await this.cartService.clearCart(userId);
 
     return order;
+  }
+
+  async getOrdersByUserId(userId: number): Promise<OrderEntity[]> {
+    const orders = await this.orderRepository.find({
+      where: {
+        userId,
+      },
+      relations: {
+        address: true,
+        ordersProduct: {
+          product: true,
+        },
+        payment: {
+          paymentStatus: true,
+        },
+      },
+    });
+
+    if (!orders || orders.length === 0) {
+      throw new NotFoundException('Ordem de compra não encontrada.');
+    }
+
+    return orders;
   }
 }
