@@ -3,14 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity } from './entity/order.entity';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { PaymentService } from 'src/payment/payment.service';
-import { CartService } from 'src/cart/cart.service';
-import { OrderProductService } from 'src/order-product/order-product.service';
-import { ProductService } from 'src/product/product.service';
-import { PaymentEntity } from 'src/payment/entity/payment.entity';
-import { OrderProductEntity } from 'src/order-product/entity/order-product.entity';
-import { CartEntity } from 'src/cart/entity/cart.entity';
-import { ProductEntity } from 'src/product/entity/product.entity';
+import { PaymentService } from '../payment/payment.service';
+import { CartService } from '../cart/cart.service';
+import { OrderProductService } from '../order-product/order-product.service';
+import { ProductService } from '../product/product.service';
+import { PaymentEntity } from '../payment/entity/payment.entity';
+import { CartEntity } from '../cart/entity/cart.entity';
+import { ProductEntity } from '../product/entity/product.entity';
 
 @Injectable()
 export class OrderService {

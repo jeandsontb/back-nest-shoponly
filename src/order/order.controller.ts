@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderService } from './order.service';
-import { UserId } from 'src/decorators/user-id.decorators';
+import { UserId } from '../decorators/user-id.decorators';
 import { OrderEntity } from './entity/order.entity';
 
 @Controller('order')

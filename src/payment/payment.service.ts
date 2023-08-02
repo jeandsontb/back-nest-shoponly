@@ -2,13 +2,13 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaymentEntity } from './entity/payment.entity';
 import { Repository } from 'typeorm';
-import { CreateOrderDto } from 'src/order/dto/create-order.dto';
+import { CreateOrderDto } from '../order/dto/create-order.dto';
 import { PaymentCardEntity } from './entity/payment-card.entity';
-import { PaymentType } from 'src/payment-status/enum/payment-type.enum';
+import { PaymentType } from '../payment-status/enum/payment-type.enum';
 import { PaymentPixEntity } from './entity/payment-pix.entity';
-import { ProductEntity } from 'src/product/entity/product.entity';
-import { CartEntity } from 'src/cart/entity/cart.entity';
-import { CartProductEntity } from 'src/cart-product/entity/cart-product.entity';
+import { ProductEntity } from '../product/entity/product.entity';
+import { CartEntity } from '../cart/entity/cart.entity';
+import { CartProductEntity } from '../cart-product/entity/cart-product.entity';
 
 @Injectable()
 export class PaymentService {
