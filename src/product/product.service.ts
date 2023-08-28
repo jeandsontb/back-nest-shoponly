@@ -14,18 +14,30 @@ export class ProductService {
     private readonly categoryService: CategoryService,
   ) {}
 
-  async getAll(productId?: number[]): Promise<ProductEntity[]> {
-    let findOpgions = {};
+  async getAll(
+    productId?: number[],
+    isGetRelations?: boolean,
+  ): Promise<ProductEntity[]> {
+    let findOptions = {};
 
     if (productId && productId.length > 0) {
-      findOpgions = {
+      findOptions = {
         where: {
           id: In(productId),
         },
       };
     }
 
-    const products = await this.productRepository.find(findOpgions);
+    if (isGetRelations) {
+      findOptions = {
+        ...findOptions,
+        relations: {
+          category: true,
+        },
+      };
+    }
+
+    const products = await this.productRepository.find(findOptions);
 
     if (!products || products.length === 0) {
       throw new NotFoundException('Produto não encontrado');

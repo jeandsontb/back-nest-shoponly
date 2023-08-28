@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ProductService } from '../product.service';
 import { ProductEntity } from '../entity/product.entity';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -53,6 +53,31 @@ describe('ProductService', () => {
   it('should return all product', async () => {
     const products = await service.getAll();
     expect(products).toEqual([productMock]);
+  });
+
+  it('should return relations in get all product', async () => {
+    const spy = jest.spyOn(productRepository, 'find');
+    const products = await service.getAll([], true);
+    expect(products).toEqual([productMock]);
+    expect(spy.mock.calls[0][0]).toEqual({
+      relations: {
+        category: true,
+      },
+    });
+  });
+
+  it('should return relations and array in get all product', async () => {
+    const spy = jest.spyOn(productRepository, 'find');
+    const products = await service.getAll([1], true);
+    expect(products).toEqual([productMock]);
+    expect(spy.mock.calls[0][0]).toEqual({
+      where: {
+        id: In([1]),
+      },
+      relations: {
+        category: true,
+      },
+    });
   });
 
   it('should return error if product empty', async () => {

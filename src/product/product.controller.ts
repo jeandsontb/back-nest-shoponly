@@ -25,7 +25,7 @@ export class ProductController {
 
   @Get()
   async getAll(): Promise<ReadProductDto[]> {
-    return (await this.productService.getAll()).map(
+    return (await this.productService.getAll([], true)).map(
       (product) => new ReadProductDto(product),
     );
   }
