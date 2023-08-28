@@ -7,22 +7,47 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryEntity } from './entity/category.entity';
 import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { ProductService } from '../product/product.service';
+import { ReadCategoryDto } from './dto/head-category.dto';
+import { CountProductDto } from 'src/product/dto/count-product.dto';
 
 @Injectable()
 export class CategoryService {
   constructor(
     @InjectRepository(CategoryEntity)
     private readonly categoryRepository: Repository<CategoryEntity>,
+    private readonly productService: ProductService,
   ) {}
 
-  async getAllCategories(): Promise<CategoryEntity[]> {
+  findAmountCategoryInProducts(
+    category: CategoryEntity,
+    countList: CountProductDto[],
+  ): number {
+    const count = countList.find((item) => item.category_id === category.id);
+
+    if (count) {
+      return count.total;
+    }
+
+    return 0;
+  }
+
+  async getAllCategories(): Promise<ReadCategoryDto[]> {
     const categories = await this.categoryRepository.find();
+
+    const count = await this.productService.countProductsByCategoryId();
 
     if (!categories || categories.length === 0) {
       throw new NotFoundException('Categoria vazia');
     }
 
-    return categories;
+    return categories.map(
+      (category) =>
+        new ReadCategoryDto(
+          category,
+          this.findAmountCategoryInProducts(category, count),
+        ),
+    );
   }
 
   async getCategoryByName(name: string): Promise<CategoryEntity> {
