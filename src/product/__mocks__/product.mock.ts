@@ -7,6 +7,6 @@ export const productMock: ProductEntity = {
   id: 4587,
   image: 'http://image.com',
   name: 'name product mock',
-  price: 35.8,
+  price: 34.3,
   updatedAt: new Date(),
 };

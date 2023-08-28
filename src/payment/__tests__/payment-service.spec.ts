@@ -15,6 +15,8 @@ import { PaymentPixEntity } from '../entity/payment-pix.entity';
 import { PaymentCardEntity } from '../entity/payment-card.entity';
 import { paymentCreditCardMock } from '../__mocks__/payment-credit.mock';
 import { BadRequestException } from '@nestjs/common';
+import { cartProductMock } from '../../cart-product/__mocks__/product-cart.mock';
+import { PaymentType } from '../../payment-status/enum/payment-type.enum';
 
 describe('OrderService', () => {
   let service: PaymentService;
@@ -87,5 +89,53 @@ describe('OrderService', () => {
         cartMock,
       ),
     ).rejects.toThrowError(BadRequestException);
+  });
+
+  it('should return final price 0 in cartProduct undefined', async () => {
+    const spy = jest.spyOn(paymentRepository, 'save');
+    await service.createPayment(
+      createOrderCreditCardMock,
+      [productMock],
+      cartMock,
+    );
+
+    const savePayment: PaymentCardEntity = spy.mock
+      .calls[0][0] as PaymentCardEntity;
+
+    expect(savePayment.finalPrice).toEqual(0);
+  });
+
+  it('should return final price send cartProduct', async () => {
+    const spy = jest.spyOn(paymentRepository, 'save');
+    await service.createPayment(createOrderCreditCardMock, [productMock], {
+      ...cartMock,
+      cartProduct: [cartProductMock],
+    });
+
+    const savePayment: PaymentCardEntity = spy.mock
+      .calls[0][0] as PaymentCardEntity;
+
+    expect(savePayment.finalPrice).toEqual(186420.5);
+  });
+
+  it('should return all data in save payment', async () => {
+    const spy = jest.spyOn(paymentRepository, 'save');
+    await service.createPayment(createOrderCreditCardMock, [productMock], {
+      ...cartMock,
+      cartProduct: [cartProductMock],
+    });
+
+    const savePayment: PaymentCardEntity = spy.mock
+      .calls[0][0] as PaymentCardEntity;
+
+    const paymentCreditCard: PaymentCardEntity = new PaymentCardEntity(
+      PaymentType.Done,
+      186420.5,
+      0,
+      186420.5,
+      createOrderCreditCardMock,
+    );
+
+    expect(savePayment).toEqual(paymentCreditCard);
   });
 });
