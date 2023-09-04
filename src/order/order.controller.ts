@@ -10,7 +10,11 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderService } from './order.service';
 import { UserId } from '../decorators/user-id.decorators';
 import { OrderEntity } from './entity/order.entity';
+import { Roles } from '../decorators/roles.decorators';
+import { UserTypeRole } from '../user/enum/user-type.enum';
+import { ReadOrderDto } from './dto/read-order.dto';
 
+@Roles(UserTypeRole.Admin, UserTypeRole.User)
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
@@ -27,5 +31,14 @@ export class OrderController {
     @UserId() userId: number,
   ): Promise<OrderEntity> {
     return this.orderService.createOrder(createOrderDto, userId);
+  }
+
+  @Roles(UserTypeRole.Admin)
+  @Get('/all')
+  async getAllOrders(): Promise<ReadOrderDto[]> {
+    console.log('entrou aqui');
+    return (await this.orderService.getAllOrders()).map(
+      (order) => new ReadOrderDto(order),
+    );
   }
 }
