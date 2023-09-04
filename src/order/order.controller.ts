@@ -36,7 +36,6 @@ export class OrderController {
   @Roles(UserTypeRole.Admin)
   @Get('/all')
   async getAllOrders(): Promise<ReadOrderDto[]> {
-    console.log('entrou aqui');
     return (await this.orderService.getAllOrders()).map(
       (order) => new ReadOrderDto(order),
     );
