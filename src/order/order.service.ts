@@ -121,6 +121,25 @@ export class OrderService {
       throw new NotFoundException('Ordens não existem');
     }
 
+    const ordersProduct =
+      await this.orderProductService.getAmountProductsByOrderId(
+        orders.map((order) => order.id),
+      );
+
+    return orders.map((order) => {
+      const orderProduct = ordersProduct.find(
+        (currentOrder) => currentOrder.order_id === order.id,
+      );
+
+      if (orderProduct) {
+        return {
+          ...order,
+          amountProducts: Number(orderProduct.total),
+        };
+      }
+      return order;
+    });
+
     return orders;
   }
 }

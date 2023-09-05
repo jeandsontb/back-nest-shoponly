@@ -14,6 +14,7 @@ export class ReadOrderDto {
   address?: ReadAddressDto;
   payment?: ReadPaymentDto;
   ordersProduct?: ReadOrderProductDto[];
+  amountProducts?: number;
 
   constructor(order: OrderEntity) {
     this.id = order.id;
@@ -31,5 +32,6 @@ export class ReadOrderDto {
     this.ordersProduct = order.ordersProduct
       ? order.ordersProduct.map((orders) => new ReadOrderProductDto(orders))
       : undefined;
+    this.amountProducts = order.amountProducts;
   }
 }
