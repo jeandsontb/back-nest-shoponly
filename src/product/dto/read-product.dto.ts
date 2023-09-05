@@ -1,4 +1,4 @@
-import { ReadCategoryDto } from 'src/category/dto/head-category.dto';
+import { ReadCategoryDto } from '../../category/dto/head-category.dto';
 import { ProductEntity } from '../entity/product.entity';
 
 export class ReadProductDto {

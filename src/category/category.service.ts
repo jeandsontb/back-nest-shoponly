@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { ProductService } from '../product/product.service';
 import { ReadCategoryDto } from './dto/head-category.dto';
-import { CountProductDto } from 'src/product/dto/count-product.dto';
+import { CountProductDto } from '../product/dto/count-product.dto';
 
 @Injectable()
 export class CategoryService {

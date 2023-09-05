@@ -56,6 +56,25 @@ describe('OrderController', () => {
       {
         id: orderMock.id,
         date: orderMock.date.toString(),
+        userId: orderMock.userId,
+        addressId: orderMock.addressId,
+        paymentId: orderMock.paymentId,
+      },
+    ]);
+    expect(spy.mock.calls.length).toEqual(1);
+  });
+
+  it('should return all getOrderById', async () => {
+    const spy = jest.spyOn(orderService, 'getOrdersByUserId');
+    const orders = await controller.getOrderById(orderMock.id);
+
+    expect(orders).toEqual([
+      {
+        id: orderMock.id,
+        date: orderMock.date.toString(),
+        userId: orderMock.userId,
+        addressId: orderMock.addressId,
+        paymentId: orderMock.paymentId,
       },
     ]);
     expect(spy.mock.calls.length).toEqual(1);
