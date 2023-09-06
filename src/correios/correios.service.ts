@@ -5,16 +5,21 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { AxiosError, AxiosResponse } from 'axios';
+import { ReadCepExternalDto } from './dto/read-cep-external.dto';
+import { CityService } from '../city/city.service';
 
 @Injectable()
 export class CorreiosService {
   URL_CORREIOS = process.env.URL_CEP_CORREIOS;
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly cityService: CityService,
+  ) {}
 
-  async getAddressByCep(cep: string): Promise<AxiosResponse<any>> {
-    return this.httpService.axiosRef
-      .get(this.URL_CORREIOS.replace('{CEP}', cep))
+  async getAddressByCep(cep: string): Promise<ReadCepExternalDto> {
+    const responseCep: ReadCepExternalDto = await this.httpService.axiosRef
+      .get<ReadCepExternalDto>(this.URL_CORREIOS.replace('{CEP}', cep))
       .then((result) => {
         if (result.data.erro === 'true') {
           throw new NotFoundException('Cep não encontrado');
@@ -27,5 +32,14 @@ export class CorreiosService {
           `Erro na requisição para buscar o cep ${err.message}`,
         );
       });
+
+    const city = await this.cityService.getCityByName(
+      responseCep.localidade,
+      responseCep.uf,
+    );
+
+    console.log(city);
+
+    return responseCep;
   }
 }
