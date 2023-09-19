@@ -1,6 +1,6 @@
 import { ReadCepExternalDto } from './read-cep-external.dto';
 
-export class readCepDto {
+export class ReadCepDto {
   cep: string;
   publicPlace: string;
   complement: string;

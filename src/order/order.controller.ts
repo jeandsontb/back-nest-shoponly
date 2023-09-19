@@ -44,11 +44,9 @@ export class OrderController {
 
   @Roles(UserTypeRole.Admin)
   @Get('/:orderId')
-  async getOrderById(
-    @Param('orderId') orderId: number,
-  ): Promise<ReadOrderDto[]> {
-    return (await this.orderService.getOrdersByUserId(undefined, orderId)).map(
-      (order) => new ReadOrderDto(order),
+  async getOrderById(@Param('orderId') orderId: number): Promise<ReadOrderDto> {
+    return new ReadOrderDto(
+      (await this.orderService.getOrdersByUserId(undefined, orderId))[0],
     );
   }
 }

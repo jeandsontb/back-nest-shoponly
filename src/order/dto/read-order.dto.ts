@@ -16,22 +16,22 @@ export class ReadOrderDto {
   ordersProduct?: ReadOrderProductDto[];
   amountProducts?: number;
 
-  constructor(order: OrderEntity) {
-    this.id = order.id;
-    this.date = order.date.toString();
-    this.userId = order.userId;
-    this.addressId = order.addressId;
-    this.paymentId = order.paymentId;
-    this.user = order.user ? new ReadUserDto(order.user) : undefined;
-    this.address = order.address
-      ? new ReadAddressDto(order.address)
+  constructor(order?: OrderEntity) {
+    this.id = order?.id;
+    this.date = order?.date.toString();
+    this.userId = order?.userId;
+    this.addressId = order?.addressId;
+    this.paymentId = order?.paymentId;
+    this.user = order?.user ? new ReadUserDto(order?.user) : undefined;
+    this.address = order?.address
+      ? new ReadAddressDto(order?.address)
       : undefined;
-    this.payment = order.payment
-      ? new ReadPaymentDto(order.payment)
+    this.payment = order?.payment
+      ? new ReadPaymentDto(order?.payment)
       : undefined;
-    this.ordersProduct = order.ordersProduct
-      ? order.ordersProduct.map((orders) => new ReadOrderProductDto(orders))
+    this.ordersProduct = order?.ordersProduct
+      ? order?.ordersProduct.map((orders) => new ReadOrderProductDto(orders))
       : undefined;
-    this.amountProducts = order.amountProducts;
+    this.amountProducts = order?.amountProducts;
   }
 }

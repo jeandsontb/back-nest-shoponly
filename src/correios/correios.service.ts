@@ -4,9 +4,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import { ReadCepExternalDto } from './dto/read-cep-external.dto';
 import { CityService } from '../city/city.service';
+import { ReadCepDto } from './dto/read-cep.dto';
+import { CityEntity } from '../city/entity/city.entity';
 
 @Injectable()
 export class CorreiosService {
@@ -17,7 +19,7 @@ export class CorreiosService {
     private readonly cityService: CityService,
   ) {}
 
-  async getAddressByCep(cep: string): Promise<ReadCepExternalDto> {
+  async getAddressByCep(cep: string): Promise<ReadCepDto> {
     const responseCep: ReadCepExternalDto = await this.httpService.axiosRef
       .get<ReadCepExternalDto>(this.URL_CORREIOS.replace('{CEP}', cep))
       .then((result) => {
@@ -33,13 +35,12 @@ export class CorreiosService {
         );
       });
 
-    const city = await this.cityService.getCityByName(
-      responseCep.localidade,
-      responseCep.uf,
-    );
+    const city: CityEntity | undefined = await this.cityService
+      .getCityByName(responseCep.localidade, responseCep.uf)
+      .catch(() => undefined);
 
     console.log(city);
 
-    return responseCep;
+    return new ReadCepDto(responseCep, city?.id, city?.state?.id);
   }
 }
