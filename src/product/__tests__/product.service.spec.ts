@@ -1,4 +1,4 @@
-import { In, Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 import { ProductService } from '../product.service';
 import { ProductEntity } from '../entity/product.entity';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -32,6 +32,7 @@ describe('ProductService', () => {
             findOne: jest.fn().mockResolvedValue(productMock),
             save: jest.fn().mockResolvedValue(productMock),
             delete: jest.fn().mockResolvedValue(returnDeleteMock),
+            findAndCount: jest.fn().mockResolvedValue([[productMock], 1]),
           },
         },
       ],
@@ -130,5 +131,48 @@ describe('ProductService', () => {
     expect(
       service.updateProduct(productMock.id, updateProductMock),
     ).rejects.toThrowError();
+  });
+
+  it('should return product pagination', async () => {
+    const spy = jest.spyOn(productRepository, 'findAndCount');
+    const products = await service.getAllPage();
+
+    expect(products.data).toEqual([productMock]);
+    expect(products.meta).toEqual({
+      itemsPerPage: 10,
+      totalItems: 1,
+      currentPage: 1,
+      totalPages: 1,
+    });
+    expect(spy.mock.calls[0][0]).toEqual({
+      take: 10,
+      skip: 0,
+    });
+  });
+
+  it('should return product pagination send size and page', async () => {
+    const mockSize = 234;
+    const mockPage = 543;
+
+    const products = await service.getAllPage(undefined, mockSize, mockPage);
+
+    expect(products.data).toEqual([productMock]);
+    expect(products.meta).toEqual({
+      itemsPerPage: mockSize,
+      totalItems: 1,
+      currentPage: mockPage,
+      totalPages: 1,
+    });
+  });
+
+  it('should return product pagination search', async () => {
+    const mockSearch = 'sdfsdfs';
+
+    const spy = jest.spyOn(productRepository, 'findAndCount');
+    await service.getAllPage(mockSearch);
+
+    expect(spy.mock.calls[0][0].where).toEqual({
+      name: ILike(`%${mockSearch}%`),
+    });
   });
 });
