@@ -45,9 +45,7 @@ describe('CartController', () => {
 
   it('should cart Entity in getCartByUserId', async () => {
     const cart = await controller.getCartByUserId(userEntityMock.id);
-    expect(cart).toEqual({
-      id: cartMock.id,
-    });
+    expect(cart).toEqual(cartMock);
   });
 
   it('should return deleteResult in cleanCart', async () => {

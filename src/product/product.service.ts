@@ -48,10 +48,6 @@ export class ProductService {
       skip,
     });
 
-    if (!products || products.length === 0) {
-      throw new NotFoundException('Produto não encontrado');
-    }
-
     return new Pagination(
       new PaginationMeta(
         Number(size),

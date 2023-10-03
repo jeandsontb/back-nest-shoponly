@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Res,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -17,6 +18,7 @@ import { UserId } from '../decorators/user-id.decorators';
 import { ReadCartDto } from './dto/read-cart.dto';
 import { DeleteResult } from 'typeorm';
 import { UpdateCartDto } from './dto/update-cart.dto';
+import { Response } from 'express';
 
 @Roles(UserTypeRole.User, UserTypeRole.Admin)
 @Controller('cart')
@@ -35,10 +37,21 @@ export class CartController {
   }
 
   @Get()
-  async getCartByUserId(@UserId() userId: number): Promise<ReadCartDto> {
-    return new ReadCartDto(
-      await this.cartService.getCartUserById(userId, true),
-    );
+  async getCartByUserId(
+    @UserId() userId: number,
+    @Res({ passthrough: true }) res?: Response,
+  ): Promise<ReadCartDto> {
+    const cart = await this.cartService
+      .getCartUserById(userId, true)
+      .catch(() => undefined);
+
+    if (cart) {
+      return cart;
+    }
+
+    res.status(204).send();
+
+    return;
   }
 
   @Delete()
